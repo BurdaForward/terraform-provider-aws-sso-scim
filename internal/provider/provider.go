@@ -2,6 +2,9 @@ package provider
 
 import (
 	"context"
+	"net/http"
+	"net/url"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -27,10 +30,25 @@ func New(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
 			DataSourcesMap: map[string]*schema.Resource{
-				"scaffolding_data_source": dataSourceScaffolding(),
+				"aws-sso-scim_user":  dataSourceUser(),
+				"aws-sso-scim_group": dataSourceGroup(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"scaffolding_resource": resourceScaffolding(),
+				//"aws-sso-scim_user": resourceUser(),
+				"aws-sso-scim_group":        resourceGroup(),
+				"aws-sso-scim_group_member": resourceGroupMember(),
+			},
+			Schema: map[string]*schema.Schema{
+				"endpoint": &schema.Schema{
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc("AWS_SSO_SCIM_ENDPOINT", nil),
+				},
+				"token": &schema.Schema{
+					Type:        schema.TypeString,
+					Optional:    true,
+					DefaultFunc: schema.EnvDefaultFunc("AWS_SSO_SCIM_TOKEN", nil),
+				},
 			},
 		}
 
@@ -40,18 +58,29 @@ func New(version string) func() *schema.Provider {
 	}
 }
 
-type apiClient struct {
-	// Add whatever fields, client or connection info, etc. here
-	// you would need to setup to communicate with the upstream
-	// API.
-}
-
 func configure(version string, p *schema.Provider) func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
-	return func(context.Context, *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		// Setup a User-Agent for your API client (replace the provider name for yours):
-		// userAgent := p.UserAgent("terraform-provider-scaffolding", version)
-		// TODO: myClient.UserAgent = userAgent
+	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+		var diags diag.Diagnostics
 
-		return &apiClient{}, nil
+		apiClient := APIClient{}
+
+		httpClient := &http.Client{Timeout: 10 * time.Second}
+
+		endpoint := d.Get("endpoint").(string)
+		token := d.Get("token").(string)
+		userAgent := p.UserAgent("terraform-provider-aws-sso-scim", version)
+
+		baseURL, err := url.Parse(endpoint)
+
+		if err != nil {
+			return apiClient, diag.FromErr(err)
+		}
+
+		apiClient.BaseURL = baseURL
+		apiClient.Token = token
+		apiClient.httpClient = httpClient
+		apiClient.UserAgent = userAgent
+
+		return apiClient, diags
 	}
 }
