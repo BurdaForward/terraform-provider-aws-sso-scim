@@ -35,7 +35,7 @@ func resourceGroupMember() *schema.Resource {
 }
 
 func resourceGroupMemberCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(APIClient)
+	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
 	err := client.AddGroupMember(d.Get("group_id").(string), d.Get("user_id").(string))
@@ -49,13 +49,13 @@ func resourceGroupMemberCreate(ctx context.Context, d *schema.ResourceData, meta
 		return diags
 	}
 
-	d.SetId(fmt.Sprintf("%v_%v", d.Get("group_id"), d.Get("user_id")))
+	d.SetId(fmt.Sprintf("%v,%v", d.Get("group_id"), d.Get("user_id")))
 
 	return diags
 }
 
 func resourceGroupMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(APIClient)
+	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
 	is_member, err := client.TestGroupMember(d.Get("group_id").(string), d.Get("user_id").(string))
@@ -70,14 +70,14 @@ func resourceGroupMemberRead(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	if is_member {
-		d.SetId(fmt.Sprintf("%v_%v", d.Get("group_id"), d.Get("user_id")))
+		d.SetId(fmt.Sprintf("%v,%v", d.Get("group_id"), d.Get("user_id")))
 	}
 
 	return diags
 }
 
 func resourceGroupMemberDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	client := meta.(APIClient)
+	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
 	err := client.RemoveGroupMember(d.Get("group_id").(string), d.Get("user_id").(string))

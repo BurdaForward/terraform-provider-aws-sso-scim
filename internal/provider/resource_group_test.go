@@ -1,15 +1,12 @@
 package provider
 
 import (
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 func TestAccResourceGroup(t *testing.T) {
-	//t.Skip("resource not yet implemented, remove this once you add your own code")
-
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -17,9 +14,8 @@ func TestAccResourceGroup(t *testing.T) {
 			{
 				Config: testAccResourceGroup,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestMatchResourceAttr(
-						"aws-sso-scim_group.foo", "display_name", regexp.MustCompile("^groupname")),
-				),
+					resource.TestCheckResourceAttrSet(
+						"aws-sso-scim_group.foo", "id")),
 			},
 		},
 	})
@@ -27,6 +23,6 @@ func TestAccResourceGroup(t *testing.T) {
 
 const testAccResourceGroup = `
 resource "aws-sso-scim_group" "foo" {
-  display_name = "groupname"
+  display_name = "terraform-test-temporary-group"
 }
 `

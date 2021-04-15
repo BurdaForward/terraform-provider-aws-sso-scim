@@ -1,31 +1,28 @@
 package provider
 
 import (
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceGroup(t *testing.T) {
-
+func TestAccDataSourceUser(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceGroup,
+				Config: testAccDataSourceUser,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestMatchResourceAttr(
-						"data.aws-sso-scim_group.foo", "display_name", regexp.MustCompile("^groupname")),
-				),
+					resource.TestCheckResourceAttrSet(
+						"data.aws-sso-scim_user.foo", "id")),
 			},
 		},
 	})
 }
 
-const testAccDataSourceGroup = `
-data "aws-sso-scim_group" "foo" {
-  display_name = "groupname"
+const testAccDataSourceUser = `
+data "aws-sso-scim_user" "foo" {
+  user_name = "terraform-test-permanent-user"
 }
 `

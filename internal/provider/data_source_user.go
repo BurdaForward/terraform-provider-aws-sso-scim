@@ -31,7 +31,7 @@ func dataSourceUser() *schema.Resource {
 
 func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	diags := diag.Diagnostics{}
-	client := meta.(APIClient)
+	client := meta.(*APIClient)
 
 	user, err := client.FindUserByUsername(d.Get("user_name").(string))
 

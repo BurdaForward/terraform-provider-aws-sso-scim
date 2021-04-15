@@ -2,9 +2,6 @@ package provider
 
 import (
 	"context"
-	"net/http"
-	"net/url"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -39,12 +36,12 @@ func New(version string) func() *schema.Provider {
 				"aws-sso-scim_group_member": resourceGroupMember(),
 			},
 			Schema: map[string]*schema.Schema{
-				"endpoint": &schema.Schema{
+				"endpoint": {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("AWS_SSO_SCIM_ENDPOINT", nil),
 				},
-				"token": &schema.Schema{
+				"token": {
 					Type:        schema.TypeString,
 					Optional:    true,
 					DefaultFunc: schema.EnvDefaultFunc("AWS_SSO_SCIM_TOKEN", nil),
@@ -62,24 +59,14 @@ func configure(version string, p *schema.Provider) func(context.Context, *schema
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 		var diags diag.Diagnostics
 
-		apiClient := APIClient{}
-
-		httpClient := &http.Client{Timeout: 10 * time.Second}
-
 		endpoint := d.Get("endpoint").(string)
 		token := d.Get("token").(string)
 		userAgent := p.UserAgent("terraform-provider-aws-sso-scim", version)
 
-		baseURL, err := url.Parse(endpoint)
-
+		apiClient, err := NewClient(endpoint, token, userAgent)
 		if err != nil {
-			return apiClient, diag.FromErr(err)
+			return nil, diag.FromErr(err)
 		}
-
-		apiClient.BaseURL = baseURL
-		apiClient.Token = token
-		apiClient.httpClient = httpClient
-		apiClient.UserAgent = userAgent
 
 		return apiClient, diags
 	}

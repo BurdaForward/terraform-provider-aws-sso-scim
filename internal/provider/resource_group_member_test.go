@@ -7,8 +7,6 @@ import (
 )
 
 func TestAccResourceGroupMember(t *testing.T) {
-	//t.Skip("resource not yet implemented, remove this once you add your own code")
-
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:          func() { testAccPreCheck(t) },
 		ProviderFactories: providerFactories,
@@ -26,10 +24,10 @@ func TestAccResourceGroupMember(t *testing.T) {
 
 const testAccResourceGroupMember = `
 data "aws-sso-scim_user" "foo" {
-  user_name = "username"
+  user_name = "terraform-test-permanent-user"
 }
 data "aws-sso-scim_group" "foo" {
-  display_name = "groupname"
+  display_name = "terraform-test-permanent-group"
 }
 resource "aws-sso-scim_group_member" "foo" {
   group_id = data.aws-sso-scim_group.foo.id

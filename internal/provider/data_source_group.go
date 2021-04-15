@@ -27,7 +27,7 @@ func dataSourceGroup() *schema.Resource {
 
 func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	diags := diag.Diagnostics{}
-	client := meta.(APIClient)
+	client := meta.(*APIClient)
 
 	group, err := client.FindGroupByDisplayname(d.Get("display_name").(string))
 
