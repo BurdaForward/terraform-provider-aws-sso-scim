@@ -15,10 +15,6 @@ import (
 )
 
 const (
-	// 10 requests every 60 seconds
-	// These values are guessed right now as there is no public documentation about the real rate limit
-	RateLimitPer int = 60
-	RateLimitReq int = 50
 	// Time out requests after 10 seconds
 	ClientTimeout int = 10
 )
@@ -59,7 +55,7 @@ func NewClient(endpoint string, token string, UserAgent string) (*APIClient, err
 		return nil, err
 	}
 
-	rl := rate.NewLimiter(rate.Every(time.Duration(RateLimitPer)*time.Second), RateLimitReq)
+	rl := rate.NewLimiter(rate.Every(time.Second/10), 10)
 
 	h := &http.Client{
 		Timeout: time.Duration(ClientTimeout) * time.Second,
