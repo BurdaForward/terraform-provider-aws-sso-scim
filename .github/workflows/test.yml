@@ -48,6 +48,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         # list whatever Terraform versions here you would like to support
         terraform:
@@ -75,11 +76,8 @@ jobs:
       env:
         TF_ACC: "1"
         TF_ACC_TERRAFORM_VERSION: ${{ matrix.terraform }}
-
-        # Set whatever additional acceptance test env vars here. You can
-        # optionally use data from your repository secrets using the
-        # following syntax:
-        # SOME_VAR: ${{ secrets.SOME_VAR }}
+        AWS_SSO_SCIM_TOKEN: ${{ secrets.AWS_SSO_SCIM_TOKEN }}
+        AWS_SSO_SCIM_ENDPOINT: ${{ secrets.AWS_SSO_SCIM_ENDPOINT}}
 
       run: |
         go test -v -cover ./internal/provider/

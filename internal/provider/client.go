@@ -15,10 +15,6 @@ import (
 )
 
 const (
-	// 10 requests every 60 seconds
-	// These values are guessed right now as there is no public documentation about the real rate limit
-	RateLimitPer int = 60
-	RateLimitReq int = 50
 	// Time out requests after 10 seconds
 	ClientTimeout int = 10
 )
@@ -59,7 +55,7 @@ func NewClient(endpoint string, token string, UserAgent string) (*APIClient, err
 		return nil, err
 	}
 
-	rl := rate.NewLimiter(rate.Every(time.Duration(RateLimitPer)*time.Second), RateLimitReq)
+	rl := rate.NewLimiter(rate.Every(time.Second/10), 10)
 
 	h := &http.Client{
 		Timeout: time.Duration(ClientTimeout) * time.Second,
@@ -150,6 +146,75 @@ func (c *APIClient) ListUsers() (*[]User, error) {
 	var userLR UserListResponse
 	_, err = c.do(req, &userLR)
 	return &userLR.Resources, err
+}
+
+func (c *APIClient) CreateUser(user *User) (*User, error) {
+
+	req, err := c.newRequest("POST", "Users", "", user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var userResponse User
+	_, err = c.do(req, &userResponse)
+
+	return &userResponse, err
+}
+
+func (c *APIClient) PatchUser(opmsg *OperationMessage, id string) (*User, error) {
+
+	req, err := c.newRequest("PATCH", fmt.Sprintf("Users/%v", id), "", opmsg)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var userResponse User
+	_, err = c.do(req, &userResponse)
+
+	return &userResponse, err
+}
+
+func (c *APIClient) PutUser(user *User, id string) (*User, error) {
+
+	req, err := c.newRequest("PUT", fmt.Sprintf("Users/%v", id), "", user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var userResponse User
+	_, err = c.do(req, &userResponse)
+
+	return &userResponse, err
+}
+
+func (c *APIClient) DeleteUser(id string) error {
+
+	req, err := c.newRequest("DELETE", fmt.Sprintf("Users/%v", id), "", nil)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = c.do(req, nil)
+
+	return err
+}
+
+func (c *APIClient) ReadUser(id string) (*User, error) {
+
+	req, err := c.newRequest("GET", fmt.Sprintf("Users/%v", id), "", nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var userResponse User
+	_, err = c.do(req, &userResponse)
+
+	return &userResponse, err
 }
 
 func (c *APIClient) FindUserByUsername(username string) (*User, error) {
