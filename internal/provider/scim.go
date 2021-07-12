@@ -42,27 +42,27 @@ type Address struct {
 }
 
 type User struct {
-	Meta              Meta           `json:"meta,omitempty"`
-	ID                string         `json:"id"`
-	ExternalID        string         `json:"externalId,omitempty"`
-	UserName          string         `json:"userName"`
-	Name              Name           `json:"name,omitempty"`
-	DisplayName       string         `json:"displayName,omitempty"`
-	NickName          string         `json:"nickName,omitempty"`
-	ProfileURL        string         `json:"profileUrl,omitempty"`
-	Title             string         `json:"title,omitempty"`
-	UserType          string         `json:"userType,omitempty"`
-	PreferredLanguage string         `json:"preferredLanguage,omitempty"`
-	Locale            string         `json:"locale,omitempty"`
-	Timezone          string         `json:"timezone,omitempty"`
-	Active            bool           `json:"active,omitempty"`
-	Emails            []Email        `json:"emails,omitempty"`
-	PhoneNumbers      []PhoneNumber  `json:"phoneNumbers,omitempty"`
-	Addresses         []Address      `json:"addresses,omitempty"`
-	EnterpriseUser    EnterpriseUser `json:"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User,omitempty"`
-	Schemas           []string       `json:"schemas"`
-	Roles             []string       `json:"roles,omitempty"`
-	Groups            []string       `json:"groups,omitempty"`
+	Meta              Meta            `json:"meta,omitempty"`
+	ID                string          `json:"id"`
+	ExternalID        string          `json:"externalId,omitempty"`
+	UserName          string          `json:"userName"`
+	Name              Name            `json:"name,omitempty"`
+	DisplayName       string          `json:"displayName,omitempty"`
+	NickName          string          `json:"nickName,omitempty"`
+	ProfileURL        string          `json:"profileUrl,omitempty"`
+	Title             string          `json:"title,omitempty"`
+	UserType          string          `json:"userType,omitempty"`
+	PreferredLanguage string          `json:"preferredLanguage,omitempty"`
+	Locale            string          `json:"locale,omitempty"`
+	Timezone          string          `json:"timezone,omitempty"`
+	Active            bool            `json:"active,omitempty"`
+	Emails            []Email         `json:"emails,omitempty"`
+	PhoneNumbers      []PhoneNumber   `json:"phoneNumbers,omitempty"`
+	Addresses         []Address       `json:"addresses,omitempty"`
+	EnterpriseUser    *EnterpriseUser `json:"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User,omitempty"`
+	Schemas           []string        `json:"schemas"`
+	Roles             []string        `json:"roles,omitempty"`
+	Groups            []string        `json:"groups,omitempty"`
 }
 
 type Manager struct {

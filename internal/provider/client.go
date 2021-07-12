@@ -148,6 +148,75 @@ func (c *APIClient) ListUsers() (*[]User, error) {
 	return &userLR.Resources, err
 }
 
+func (c *APIClient) CreateUser(user *User) (*User, error) {
+
+	req, err := c.newRequest("POST", "Users", "", user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var userResponse User
+	_, err = c.do(req, &userResponse)
+
+	return &userResponse, err
+}
+
+func (c *APIClient) PatchUser(opmsg *OperationMessage, id string) (*User, error) {
+
+	req, err := c.newRequest("PATCH", fmt.Sprintf("Users/%v", id), "", opmsg)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var userResponse User
+	_, err = c.do(req, &userResponse)
+
+	return &userResponse, err
+}
+
+func (c *APIClient) PutUser(user *User, id string) (*User, error) {
+
+	req, err := c.newRequest("PUT", fmt.Sprintf("Users/%v", id), "", user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var userResponse User
+	_, err = c.do(req, &userResponse)
+
+	return &userResponse, err
+}
+
+func (c *APIClient) DeleteUser(id string) error {
+
+	req, err := c.newRequest("DELETE", fmt.Sprintf("Users/%v", id), "", nil)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = c.do(req, nil)
+
+	return err
+}
+
+func (c *APIClient) ReadUser(id string) (*User, error) {
+
+	req, err := c.newRequest("GET", fmt.Sprintf("Users/%v", id), "", nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var userResponse User
+	_, err = c.do(req, &userResponse)
+
+	return &userResponse, err
+}
+
 func (c *APIClient) FindUserByUsername(username string) (*User, error) {
 	filter := fmt.Sprintf("userName eq \"%v\"", username)
 

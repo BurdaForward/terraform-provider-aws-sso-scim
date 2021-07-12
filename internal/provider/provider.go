@@ -31,7 +31,7 @@ func New(version string) func() *schema.Provider {
 				"aws-sso-scim_group": dataSourceGroup(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				//"aws-sso-scim_user": resourceUser(),
+				"aws-sso-scim_user":         resourceUser(),
 				"aws-sso-scim_group":        resourceGroup(),
 				"aws-sso-scim_group_member": resourceGroupMember(),
 			},
