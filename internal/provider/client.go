@@ -138,97 +138,50 @@ func (c *APIClient) do(req *http.Request, v interface{}) (*http.Response, error)
 	}
 }
 
-func (c *APIClient) ListUsers() (*[]User, error) {
-	req, err := c.newRequest("GET", "Users", "", nil)
-	if err != nil {
-		return nil, err
-	}
-	var userLR UserListResponse
-	_, err = c.do(req, &userLR)
-	return &userLR.Resources, err
-}
-
-func (c *APIClient) CreateUser(user *User) (*User, error) {
-
-	req, err := c.newRequest("POST", "Users", "", user)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var userResponse User
-	_, err = c.do(req, &userResponse)
-
-	return &userResponse, err
-}
-
-func (c *APIClient) PatchUser(opmsg *OperationMessage, id string) (*User, error) {
-
-	req, err := c.newRequest("PATCH", fmt.Sprintf("Users/%v", id), "", opmsg)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var userResponse User
-	_, err = c.do(req, &userResponse)
-
-	return &userResponse, err
-}
-
-func (c *APIClient) PutUser(user *User, id string) (*User, error) {
-
-	req, err := c.newRequest("PUT", fmt.Sprintf("Users/%v", id), "", user)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var userResponse User
-	_, err = c.do(req, &userResponse)
-
-	return &userResponse, err
-}
-
-func (c *APIClient) DeleteUser(id string) error {
-
-	req, err := c.newRequest("DELETE", fmt.Sprintf("Users/%v", id), "", nil)
-
+func (c *APIClient) doRequest(method, path string, filter string, body interface{}, v interface{}) error {
+	req, err := c.newRequest(method, path, filter, body)
 	if err != nil {
 		return err
 	}
 
-	_, err = c.do(req, nil)
-
+	_, err = c.do(req, v)
 	return err
 }
 
-func (c *APIClient) ReadUser(id string) (*User, error) {
+func (c *APIClient) ListUsers() (*[]User, error) {
+	var userLR UserListResponse
+	return &userLR.Resources, c.doRequest("GET", "Users", "", nil, &userLR)
+}
 
-	req, err := c.newRequest("GET", fmt.Sprintf("Users/%v", id), "", nil)
-
-	if err != nil {
-		return nil, err
-	}
-
+func (c *APIClient) CreateUser(user *User) (*User, error) {
 	var userResponse User
-	_, err = c.do(req, &userResponse)
+	return &userResponse, c.doRequest("POST", "Users", "", user, &userResponse)
+}
 
-	return &userResponse, err
+func (c *APIClient) PatchUser(opmsg *OperationMessage, id string) (*User, error) {
+	var userResponse User
+	return &userResponse, c.doRequest("PATCH", fmt.Sprintf("Users/%v", id), "", opmsg, &userResponse)
+}
+
+func (c *APIClient) PutUser(user *User, id string) (*User, error) {
+	var userResponse User
+	return &userResponse, c.doRequest("PUT", fmt.Sprintf("Users/%v", id), "", user, &userResponse)
+}
+
+func (c *APIClient) DeleteUser(id string) error {
+	return c.doRequest("DELETE", fmt.Sprintf("Users/%v", id), "", nil, nil)
+}
+
+func (c *APIClient) ReadUser(id string) (*User, error) {
+	var userResponse User
+	return &userResponse, c.doRequest("GET", fmt.Sprintf("Users/%v", id), "", nil, &userResponse)
 }
 
 func (c *APIClient) FindUserByUsername(username string) (*User, error) {
 	filter := fmt.Sprintf("userName eq \"%v\"", username)
 
-	req, err := c.newRequest("GET", "Users", filter, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
 	var userLR UserListResponse
-	_, err = c.do(req, &userLR)
-	if err != nil {
+	if err := c.doRequest("GET", "Users", filter, nil, &userLR); err != nil {
 		return nil, err
 	}
 
@@ -236,21 +189,14 @@ func (c *APIClient) FindUserByUsername(username string) (*User, error) {
 		return nil, fmt.Errorf("user \"%v\" not found", username)
 	}
 
-	return &userLR.Resources[0], err
+	return &userLR.Resources[0], nil
 }
 
 func (c *APIClient) FindGroupByDisplayname(displayname string) (*Group, error) {
 	filter := fmt.Sprintf("displayName eq \"%v\"", displayname)
 
-	req, err := c.newRequest("GET", "Groups", filter, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
 	var groupLR GroupListResponse
-	_, err = c.do(req, &groupLR)
-	if err != nil {
+	if err := c.doRequest("GET", "Groups", filter, nil, &groupLR); err != nil {
 		return nil, err
 	}
 
@@ -258,71 +204,33 @@ func (c *APIClient) FindGroupByDisplayname(displayname string) (*Group, error) {
 		return nil, fmt.Errorf("group \"%v\" not found", displayname)
 	}
 
-	return &groupLR.Resources[0], err
+	return &groupLR.Resources[0], nil
 }
 
 func (c *APIClient) CreateGroup(displayname string) (*Group, error) {
-
 	body := map[string]interface{}{"displayName": displayname, "members": []string{}}
-
-	req, err := c.newRequest("POST", "Groups", "", body)
-
-	if err != nil {
-		return nil, err
-	}
-
 	var groupResponse Group
-	_, err = c.do(req, &groupResponse)
-
-	return &groupResponse, err
+	return &groupResponse, c.doRequest("POST", "Groups", "", body, &groupResponse)
 }
 
 func (c *APIClient) ReadGroup(id string) (*Group, error) {
-
-	req, err := c.newRequest("GET", fmt.Sprintf("Groups/%v", id), "", nil)
-
-	if err != nil {
-		return nil, err
-	}
-
 	var groupResponse Group
-	_, err = c.do(req, &groupResponse)
-
-	return &groupResponse, err
+	return &groupResponse, c.doRequest("GET", fmt.Sprintf("Groups/%v", id), "", nil, &groupResponse)
 }
 
 func (c *APIClient) DeleteGroup(id string) error {
-
-	req, err := c.newRequest("DELETE", fmt.Sprintf("Groups/%v", id), "", nil)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = c.do(req, nil)
-
-	return err
+	return c.doRequest("DELETE", fmt.Sprintf("Groups/%v", id), "", nil, nil)
 }
 
 func (c *APIClient) TestGroupMember(group_id string, user_id string) (bool, error) {
 	filter := fmt.Sprintf("id eq \"%v\" and members eq \"%v\"", group_id, user_id)
 
-	req, err := c.newRequest("GET", "Groups", filter, nil)
-	if err != nil {
-		return false, err
-	}
-
 	var groupLR GroupListResponse
-	_, err = c.do(req, &groupLR)
-	if err != nil {
+	if err := c.doRequest("GET", "Groups", filter, nil, &groupLR); err != nil {
 		return false, err
 	}
 
-	if groupLR.TotalResults != 1 || len(groupLR.Resources) != 1 {
-		return false, err
-	}
-
-	return true, err
+	return (groupLR.TotalResults != 1 || len(groupLR.Resources) != 1), nil
 }
 
 func (c *APIClient) AddGroupMember(group_id string, user_id string) error {
@@ -340,14 +248,7 @@ func (c *APIClient) AddGroupMember(group_id string, user_id string) error {
 		},
 	}
 
-	req, err := c.newRequest("PATCH", fmt.Sprintf("Groups/%v", group_id), "", opmsg)
-	if err != nil {
-		return err
-	}
-
-	_, err = c.do(req, nil)
-
-	return err
+	return c.doRequest("PATCH", fmt.Sprintf("Groups/%v", group_id), "", opmsg, nil)
 }
 
 func (c *APIClient) RemoveGroupMember(group_id string, user_id string) error {
@@ -365,12 +266,5 @@ func (c *APIClient) RemoveGroupMember(group_id string, user_id string) error {
 		},
 	}
 
-	req, err := c.newRequest("PATCH", fmt.Sprintf("Groups/%v", group_id), "", opmsg)
-	if err != nil {
-		return err
-	}
-
-	_, err = c.do(req, nil)
-
-	return err
+	return c.doRequest("PATCH", fmt.Sprintf("Groups/%v", group_id), "", opmsg, nil)
 }
