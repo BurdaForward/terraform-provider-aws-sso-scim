@@ -1,4 +1,4 @@
-module github.com/burdaforward/terraform-provider-aws-sso-scim
+module github.com/agutoli/terraform-provider-aws-sso-scim
 
 go 1.15
 

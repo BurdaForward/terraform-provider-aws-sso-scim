@@ -27,13 +27,13 @@ func New(version string) func() *schema.Provider {
 	return func() *schema.Provider {
 		p := &schema.Provider{
 			DataSourcesMap: map[string]*schema.Resource{
-				"aws-sso-scim_user":  dataSourceUser(),
-				"aws-sso-scim_group": dataSourceGroup(),
+				"aws_sso_scim_user":  dataSourceUser(),
+				"aws_sso_scim_group": dataSourceGroup(),
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"aws-sso-scim_user":         resourceUser(),
-				"aws-sso-scim_group":        resourceGroup(),
-				"aws-sso-scim_group_member": resourceGroupMember(),
+				"aws_sso_scim_user":         resourceUser(),
+				"aws_sso_scim_group":        resourceGroup(),
+				"aws_sso_scim_group_member": resourceGroupMember(),
 			},
 			Schema: map[string]*schema.Schema{
 				"endpoint": {

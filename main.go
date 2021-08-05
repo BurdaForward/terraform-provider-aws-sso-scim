@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/burdaforward/terraform-provider-aws-sso-scim/internal/provider"
+	"github.com/agutoli/terraform-provider-aws-sso-scim/internal/provider"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 )
 
@@ -37,7 +37,7 @@ func main() {
 	opts := &plugin.ServeOpts{ProviderFunc: provider.New(version)}
 
 	if debugMode {
-		err := plugin.Debug(context.Background(), "registry.terraform.io/burdaforward/aws-sso-scim", opts)
+		err := plugin.Debug(context.Background(), "registry.terraform.io/agutoli/aws-sso-scim", opts)
 		if err != nil {
 			log.Fatal(err.Error())
 		}

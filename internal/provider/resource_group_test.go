@@ -15,14 +15,14 @@ func TestAccResourceGroup(t *testing.T) {
 				Config: testAccResourceGroup,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(
-						"aws-sso-scim_group.foo", "id")),
+						"aws_sso_scim_group.foo", "id")),
 			},
 		},
 	})
 }
 
 const testAccResourceGroup = `
-resource "aws-sso-scim_group" "foo" {
+resource "aws_sso_scim_group" "foo" {
   display_name = "terraform-test-temporary-group"
 }
 `
