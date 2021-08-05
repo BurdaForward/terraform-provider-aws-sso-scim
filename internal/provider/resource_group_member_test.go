@@ -23,7 +23,7 @@ func TestAccResourceGroupMember(t *testing.T) {
 }
 
 const testAccResourceGroupMember = `
-data "aws-sso-scim_user" "foo" {
+data "aws_sso_scim_user" "foo" {
   user_name = "terraform-test-permanent-user"
 }
 data "aws_sso_scim_group" "foo" {
@@ -31,6 +31,6 @@ data "aws_sso_scim_group" "foo" {
 }
 resource "aws_sso_scim_group_member" "foo" {
   group_id = data.aws_sso_scim_group.foo.id
-	user_id = data.aws-sso-scim_user.foo.id
+	user_id = data.aws_sso_scim_user.foo.id
 }
 `

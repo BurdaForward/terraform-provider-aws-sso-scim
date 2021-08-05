@@ -15,13 +15,13 @@ func TestAccResourceUser(t *testing.T) {
 				Config: testAccResourceUser,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(
-						"aws-sso-scim_user.foo", "id")),
+						"aws_sso_scim_user.foo", "id")),
 			},
 			{
 				Config: testAccResourceUserUpdate,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("aws-sso-scim_user.foo", "id"),
-					resource.TestCheckResourceAttr("aws-sso-scim_user.foo", "display_name", "terraform-test-temporary-user-display_name2"),
+					resource.TestCheckResourceAttrSet("aws_sso_scim_user.foo", "id"),
+					resource.TestCheckResourceAttr("aws_sso_scim_user.foo", "display_name", "terraform-test-temporary-user-display_name2"),
 				),
 			},
 		},
@@ -29,7 +29,7 @@ func TestAccResourceUser(t *testing.T) {
 }
 
 const testAccResourceUser = `
-resource "aws-sso-scim_user" "foo" {
+resource "aws_sso_scim_user" "foo" {
   display_name = "terraform-test-temporary-user-display_name"
   user_name = "terraform-test-temporary-user-user_name"
   family_name = "terraform-test-temporary-user-family_name"
@@ -38,7 +38,7 @@ resource "aws-sso-scim_user" "foo" {
 `
 
 const testAccResourceUserUpdate = `
-resource "aws-sso-scim_user" "foo" {
+resource "aws_sso_scim_user" "foo" {
   display_name = "terraform-test-temporary-user-display_name2"
   user_name = "terraform-test-temporary-user-user_name2"
   family_name = "terraform-test-temporary-user-family_name2"
