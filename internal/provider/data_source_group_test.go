@@ -15,14 +15,14 @@ func TestAccDataSourceGroup(t *testing.T) {
 				Config: testAccDataSourceGroup,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(
-						"data.aws-sso-scim_group.foo", "id")),
+						"data.aws_sso_scim_group.foo", "id")),
 			},
 		},
 	})
 }
 
 const testAccDataSourceGroup = `
-data "aws-sso-scim_group" "foo" {
+data "aws_sso_scim_group" "foo" {
   display_name = "terraform-test-permanent-group"
 }
 `

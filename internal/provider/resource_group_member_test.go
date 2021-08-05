@@ -15,7 +15,7 @@ func TestAccResourceGroupMember(t *testing.T) {
 				Config: testAccResourceGroupMember,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(
-						"aws-sso-scim_group_member.foo", "id"),
+						"aws_sso_scim_group_member.foo", "id"),
 				),
 			},
 		},
@@ -26,11 +26,11 @@ const testAccResourceGroupMember = `
 data "aws-sso-scim_user" "foo" {
   user_name = "terraform-test-permanent-user"
 }
-data "aws-sso-scim_group" "foo" {
+data "aws_sso_scim_group" "foo" {
   display_name = "terraform-test-permanent-group"
 }
-resource "aws-sso-scim_group_member" "foo" {
-  group_id = data.aws-sso-scim_group.foo.id
+resource "aws_sso_scim_group_member" "foo" {
+  group_id = data.aws_sso_scim_group.foo.id
 	user_id = data.aws-sso-scim_user.foo.id
 }
 `
