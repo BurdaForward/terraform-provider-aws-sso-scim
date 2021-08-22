@@ -15,7 +15,8 @@ func TestAccDataSourceUser(t *testing.T) {
 				Config: testAccDataSourceUser,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet(
-						"data.aws-sso-scim_user.foo", "id")),
+						"data.aws-sso-scim_user.foo", "id"),
+				),
 			},
 		},
 	})
@@ -24,5 +25,6 @@ func TestAccDataSourceUser(t *testing.T) {
 const testAccDataSourceUser = `
 data "aws-sso-scim_user" "foo" {
   user_name = "terraform-test-permanent-user"
+	nick_name = null
 }
 `

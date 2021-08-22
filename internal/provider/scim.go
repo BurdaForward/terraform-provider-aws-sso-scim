@@ -13,12 +13,12 @@ type Meta struct {
 }
 
 type Name struct {
-	Formatted       string `json:"formatted,omitempty"`
-	FamilyName      string `json:"familyName,omitempty"`
-	GivenName       string `json:"givenName,omitempty"`
-	MiddleName      string `json:"middleName,omitempty"`
-	HonorificPrefix string `json:"honorificPrefix,omitempty"`
-	HonorificSuffix string `json:"honorificSuffix,omitempty"`
+	Formatted       *string `json:"formatted,omitempty"`
+	FamilyName      string  `json:"familyName,omitempty"`
+	GivenName       string  `json:"givenName,omitempty"`
+	MiddleName      *string `json:"middleName,omitempty"`
+	HonorificPrefix *string `json:"honorificPrefix,omitempty"`
+	HonorificSuffix *string `json:"honorificSuffix,omitempty"`
 }
 
 type Email struct {
@@ -33,12 +33,12 @@ type PhoneNumber struct {
 }
 
 type Address struct {
-	Formatted     string `json:"formatted,omitempty"`
-	StreetAddress string `json:"streetAddress,omitempty"`
-	Locality      string `json:"locality,omitempty"`
-	Region        string `json:"region,omitempty"`
-	PostalCode    string `json:"postalCode,omitempty"`
-	Country       string `json:"country,omitempty"`
+	Formatted     *string `json:"formatted,omitempty"`
+	StreetAddress *string `json:"streetAddress,omitempty"`
+	Locality      *string `json:"locality,omitempty"`
+	Region        *string `json:"region,omitempty"`
+	PostalCode    *string `json:"postalCode,omitempty"`
+	Country       *string `json:"country,omitempty"`
 }
 
 type User struct {
@@ -48,13 +48,13 @@ type User struct {
 	UserName          string          `json:"userName"`
 	Name              Name            `json:"name,omitempty"`
 	DisplayName       string          `json:"displayName,omitempty"`
-	NickName          string          `json:"nickName,omitempty"`
-	ProfileURL        string          `json:"profileUrl,omitempty"`
-	Title             string          `json:"title,omitempty"`
-	UserType          string          `json:"userType,omitempty"`
-	PreferredLanguage string          `json:"preferredLanguage,omitempty"`
-	Locale            string          `json:"locale,omitempty"`
-	Timezone          string          `json:"timezone,omitempty"`
+	NickName          *string         `json:"nickName,omitempty"`
+	ProfileURL        *string         `json:"profileUrl,omitempty"`
+	Title             *string         `json:"title,omitempty"`
+	UserType          *string         `json:"userType,omitempty"`
+	PreferredLanguage *string         `json:"preferredLanguage,omitempty"`
+	Locale            *string         `json:"locale,omitempty"`
+	Timezone          *string         `json:"timezone,omitempty"`
 	Active            bool            `json:"active,omitempty"`
 	Emails            []Email         `json:"emails,omitempty"`
 	PhoneNumbers      []PhoneNumber   `json:"phoneNumbers,omitempty"`
@@ -68,15 +68,16 @@ type User struct {
 type Manager struct {
 	Value string `json:"value"`
 	Ref   string `json:"$ref,omitempty"`
+	// displayName not supported by AWS
 }
 
 type EnterpriseUser struct {
-	EmployeeNumber string  `json:"employeeNumber"`
-	CostCenter     string  `json:"costCenter"`
-	Organization   string  `json:"organization"`
-	Division       string  `json:"division"`
-	Department     string  `json:"department"`
-	Manager        Manager `json:"manager"`
+	EmployeeNumber *string  `json:"employeeNumber"`
+	CostCenter     *string  `json:"costCenter"`
+	Organization   *string  `json:"organization"`
+	Division       *string  `json:"division"`
+	Department     *string  `json:"department"`
+	Manager        *Manager `json:"manager"`
 }
 
 type Member struct {
