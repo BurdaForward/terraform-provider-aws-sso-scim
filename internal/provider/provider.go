@@ -38,12 +38,14 @@ func New(version string) func() *schema.Provider {
 			Schema: map[string]*schema.Schema{
 				"endpoint": {
 					Type:        schema.TypeString,
-					Optional:    true,
+					Description: "Full URL of your AWS SSO SCIM endpoint. Can also be provided via `AWS_SSO_SCIM_ENDPOINT` environment variable.",
+					Required:    true,
 					DefaultFunc: schema.EnvDefaultFunc("AWS_SSO_SCIM_ENDPOINT", nil),
 				},
 				"token": {
 					Type:        schema.TypeString,
-					Optional:    true,
+					Description: "Authentication token of your AWS SSO SCIM endpoint. Can also be provided via `AWS_SSO_SCIM_TOKEN` environment variable.",
+					Required:    true,
 					DefaultFunc: schema.EnvDefaultFunc("AWS_SSO_SCIM_TOKEN", nil),
 				},
 			},
