@@ -9,8 +9,6 @@ description: |-
 
 SCIM User resource.
 
-
-
 ## Schema
 
 ### Required
@@ -19,9 +17,8 @@ SCIM User resource.
 - **family_name** (String) Family Name
 - **given_name** (String) Given Name
 - **user_name** (String) Username
+- **active** (Boolean) Active
 
 ### Read-only
 
 - **id** (String) The ID of this resource.
-
-
