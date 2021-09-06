@@ -9,7 +9,7 @@ import (
 
 func dataSourceGroup() *schema.Resource {
 	return &schema.Resource{
-		Description: "SCIM Group data source.",
+		Description: "Allows you to reference an existing group by display name and get the internal ID.",
 		ReadContext: dataSourceGroupRead,
 		Schema: map[string]*schema.Schema{
 			"id": {

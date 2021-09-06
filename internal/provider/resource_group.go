@@ -10,7 +10,7 @@ import (
 func resourceGroup() *schema.Resource {
 	return &schema.Resource{
 		// This description is used by the documentation generator and the language server.
-		Description: "SCIM Group resource.",
+		Description: "Creates a new group.",
 
 		CreateContext: resourceGroupCreate,
 		ReadContext:   resourceGroupRead,
@@ -22,7 +22,7 @@ func resourceGroup() *schema.Resource {
 				Computed: true,
 			},
 			"display_name": {
-				Description: "displayName attribute.",
+				Description: "Display name for the group. This cannot be changed after creation.",
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,

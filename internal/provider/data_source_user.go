@@ -9,7 +9,7 @@ import (
 
 func dataSourceUser() *schema.Resource {
 	return &schema.Resource{
-		Description: "SCIM User data source.",
+		Description: "Allows you to reference an existing user by user name and get the internal ID.",
 		ReadContext: dataSourceUserRead,
 		Schema: map[string]*schema.Schema{
 			"id": {

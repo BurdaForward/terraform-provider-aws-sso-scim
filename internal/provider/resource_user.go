@@ -10,7 +10,7 @@ import (
 func resourceUser() *schema.Resource {
 	return &schema.Resource{
 		// This description is used by the documentation generator and the language server.
-		Description: "SCIM User resource.",
+		Description: "Creates a new user.",
 
 		CreateContext: resourceUserCreate,
 		ReadContext:   resourceUserRead,
@@ -24,27 +24,27 @@ func resourceUser() *schema.Resource {
 				Computed: true,
 			},
 			"given_name": {
-				Description: "Given Name",
+				Description: "Given name for the user.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"family_name": {
-				Description: "Family Name",
+				Description: "Family name for the user.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"display_name": {
-				Description: "Display Name",
+				Description: "Display name for the user.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"user_name": {
-				Description: "Username",
+				Description: "Username for the user.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"active": {
-				Description: "Active",
+				Description: "Set user to be active. Defaults to `false`.",
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,

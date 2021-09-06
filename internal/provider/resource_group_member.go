@@ -11,7 +11,7 @@ import (
 func resourceGroupMember() *schema.Resource {
 	return &schema.Resource{
 		// This description is used by the documentation generator and the language server.
-		Description: "SCIM Group resource member.",
+		Description: "Assigns a user to be member of a group.",
 
 		CreateContext: resourceGroupMemberCreate,
 		ReadContext:   resourceGroupMemberRead,
