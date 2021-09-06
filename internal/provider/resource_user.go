@@ -63,7 +63,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 			FamilyName: d.Get("family_name").(string),
 			GivenName:  d.Get("given_name").(string),
 		},
-		Active: d.Get("active").(bool)
+		Active: d.Get("active").(bool),
 	}
 
 	user, err := client.CreateUser(&new_user)
