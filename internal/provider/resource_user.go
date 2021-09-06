@@ -43,6 +43,11 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"active": {
+				Description: "Active",
+				Type:        schema.TypeBool,
+				Required:    false,
+			},
 		},
 	}
 }
@@ -58,6 +63,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 			FamilyName: d.Get("family_name").(string),
 			GivenName:  d.Get("given_name").(string),
 		},
+		Active: d.Get("active").(bool)
 	}
 
 	user, err := client.CreateUser(&new_user)
@@ -95,6 +101,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	d.Set("user_name", user.UserName)
 	d.Set("family_name", user.Name.FamilyName)
 	d.Set("given_name", user.Name.GivenName)
+	d.Set("active", user.Active)
 
 	return diags
 }
@@ -128,6 +135,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 		"display_name": "displayName",
 		"family_name":  "name.familyName",
 		"given_name":   "name.givenName",
+		"active":       "active",
 	}
 
 	for attribute, path := range required_map {

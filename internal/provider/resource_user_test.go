@@ -34,6 +34,7 @@ resource "aws-sso-scim_user" "foo" {
   user_name = "terraform-test-temporary-user-user_name"
   family_name = "terraform-test-temporary-user-family_name"
   given_name = "terraform-test-temporary-user-given_name"
+  active = true
 }
 `
 
@@ -43,5 +44,6 @@ resource "aws-sso-scim_user" "foo" {
   user_name = "terraform-test-temporary-user-user_name2"
   family_name = "terraform-test-temporary-user-family_name2"
   given_name = "terraform-test-temporary-user-given_name2"
+  active = false
 }
 `
