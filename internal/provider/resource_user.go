@@ -47,6 +47,7 @@ func resourceUser() *schema.Resource {
 				Description: "Active",
 				Type:        schema.TypeBool,
 				Required:    false,
+				Default:     false,
 			},
 		},
 	}
