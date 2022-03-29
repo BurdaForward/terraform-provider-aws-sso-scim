@@ -48,7 +48,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, meta inter
 
 	d.SetId(group.ID)
 
-	return diags
+	return resourceGroupRead(ctx, d, meta)
 }
 
 func resourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -92,5 +92,5 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, meta inter
 		return diags
 	}
 
-	return diags
+	return resourceGroupRead(ctx, d, meta)
 }

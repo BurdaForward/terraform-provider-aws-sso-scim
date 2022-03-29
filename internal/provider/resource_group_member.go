@@ -51,7 +51,7 @@ func resourceGroupMemberCreate(ctx context.Context, d *schema.ResourceData, meta
 
 	d.SetId(fmt.Sprintf("%v,%v", d.Get("group_id"), d.Get("user_id")))
 
-	return diags
+	return resourceGroupMemberRead(ctx, d, meta)
 }
 
 func resourceGroupMemberRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -100,5 +100,5 @@ func resourceGroupMemberDelete(ctx context.Context, d *schema.ResourceData, meta
 		return diags
 	}
 
-	return diags
+	return resourceGroupMemberRead(ctx, d, meta)
 }

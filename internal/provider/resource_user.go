@@ -80,7 +80,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 
 	d.SetId(user.ID)
 
-	return diags
+	return resourceUserRead(ctx, d, meta)
 }
 
 func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -128,7 +128,7 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interf
 		return diags
 	}
 
-	return diags
+	return resourceUserRead(ctx, d, meta)
 }
 
 func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
