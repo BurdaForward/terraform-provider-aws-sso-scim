@@ -58,9 +58,15 @@ func resourceGroupMemberRead(ctx context.Context, d *schema.ResourceData, meta i
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	is_member, _, err := client.TestGroupMember(d.Get("group_id").(string), d.Get("user_id").(string))
+	is_member, resp, err := client.TestGroupMember(d.Get("group_id").(string), d.Get("user_id").(string))
 
 	if err != nil {
+		// if we get a 404, user might have vanished, so we remove this resource from the state.
+		if resp.StatusCode == 404 {
+			d.SetId("")
+			return diags
+		}
+
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Unable to read group member",

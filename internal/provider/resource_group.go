@@ -55,9 +55,15 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	group, _, err := client.ReadGroup(d.Id())
+	group, resp, err := client.ReadGroup(d.Id())
 
 	if err != nil {
+		// if we get a 404, group maybe has vanished, so we remove this resource from the state.
+		if resp.StatusCode == 404 {
+			d.SetId("")
+			return diags
+		}
+
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Unable to read Group",

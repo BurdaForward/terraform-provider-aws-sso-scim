@@ -87,9 +87,15 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	user, _, err := client.ReadUser(d.Id())
+	user, resp, err := client.ReadUser(d.Id())
 
 	if err != nil {
+		// if we get a 404, user maybe has vanished, so we remove this resource from the state.
+		if resp.StatusCode == 404 {
+			d.SetId("")
+			return diags
+		}
+
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Unable to read User",
