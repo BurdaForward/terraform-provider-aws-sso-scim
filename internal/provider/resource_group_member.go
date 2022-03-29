@@ -77,6 +77,9 @@ func resourceGroupMemberRead(ctx context.Context, d *schema.ResourceData, meta i
 
 	if is_member {
 		d.SetId(fmt.Sprintf("%v,%v", d.Get("group_id"), d.Get("user_id")))
+	} else {
+		// if not is_member, the association has been lost, so we remove this resource from the state.
+		d.SetId("")
 	}
 
 	return diags

@@ -240,7 +240,7 @@ func (c *APIClient) TestGroupMember(group_id string, user_id string) (bool, *htt
 		return false, resp, err
 	}
 
-	return (groupLR.TotalResults != 1 || len(groupLR.Resources) != 1), resp, nil
+	return !(groupLR.TotalResults != 1 || len(groupLR.Resources) != 1), resp, nil
 }
 
 func (c *APIClient) AddGroupMember(group_id string, user_id string) (*http.Response, error) {
