@@ -119,13 +119,13 @@ func (c *APIClient) do(req *http.Request, v interface{}) (*http.Response, error)
 
 	switch {
 	case resp.StatusCode == 401:
-		return nil, errors.New("401 unauthorized")
+		return resp, errors.New("401 unauthorized")
 	case resp.StatusCode == 404:
-		return nil, errors.New("404 not found")
+		return resp, errors.New("404 not found")
 	case resp.StatusCode == 409:
-		return nil, errors.New("409 conflict, resource already exists")
+		return resp, errors.New("409 conflict, resource already exists")
 	case resp.StatusCode == 429:
-		return nil, errors.New("429 ThrottlingException")
+		return resp, errors.New("429 ThrottlingException")
 	case resp.StatusCode == 200 || resp.StatusCode == 201:
 		err = json.NewDecoder(resp.Body).Decode(v)
 		return resp, err
@@ -138,102 +138,112 @@ func (c *APIClient) do(req *http.Request, v interface{}) (*http.Response, error)
 	}
 }
 
-func (c *APIClient) doRequest(method, path string, filter string, body interface{}, v interface{}) error {
+func (c *APIClient) doRequest(method, path string, filter string, body interface{}, v interface{}) (*http.Response, error) {
 	req, err := c.newRequest(method, path, filter, body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = c.do(req, v)
-	return err
+	resp, err := c.do(req, v)
+	return resp, err
 }
 
-func (c *APIClient) ListUsers() (*[]User, error) {
+func (c *APIClient) ListUsers() (*[]User, *http.Response, error) {
 	var userLR UserListResponse
-	return &userLR.Resources, c.doRequest("GET", "Users", "", nil, &userLR)
+	resp, err := c.doRequest("GET", "Users", "", nil, &userLR)
+	return &userLR.Resources, resp, err
 }
 
-func (c *APIClient) CreateUser(user *User) (*User, error) {
+func (c *APIClient) CreateUser(user *User) (*User, *http.Response, error) {
 	var userResponse User
-	return &userResponse, c.doRequest("POST", "Users", "", user, &userResponse)
+	resp, err := c.doRequest("POST", "Users", "", user, &userResponse)
+	return &userResponse, resp, err
 }
 
-func (c *APIClient) PatchUser(opmsg *OperationMessage, id string) (*User, error) {
+func (c *APIClient) PatchUser(opmsg *OperationMessage, id string) (*User, *http.Response, error) {
 	var userResponse User
-	return &userResponse, c.doRequest("PATCH", fmt.Sprintf("Users/%v", id), "", opmsg, &userResponse)
+	resp, err := c.doRequest("PATCH", fmt.Sprintf("Users/%v", id), "", opmsg, &userResponse)
+	return &userResponse, resp, err
 }
 
-func (c *APIClient) PutUser(user *User, id string) (*User, error) {
+func (c *APIClient) PutUser(user *User, id string) (*User, *http.Response, error) {
 	var userResponse User
-	return &userResponse, c.doRequest("PUT", fmt.Sprintf("Users/%v", id), "", user, &userResponse)
+	resp, err := c.doRequest("PUT", fmt.Sprintf("Users/%v", id), "", user, &userResponse)
+	return &userResponse, resp, err
 }
 
-func (c *APIClient) DeleteUser(id string) error {
+func (c *APIClient) DeleteUser(id string) (*http.Response, error) {
 	return c.doRequest("DELETE", fmt.Sprintf("Users/%v", id), "", nil, nil)
 }
 
-func (c *APIClient) ReadUser(id string) (*User, error) {
+func (c *APIClient) ReadUser(id string) (*User, *http.Response, error) {
 	var userResponse User
-	return &userResponse, c.doRequest("GET", fmt.Sprintf("Users/%v", id), "", nil, &userResponse)
+	resp, err := c.doRequest("GET", fmt.Sprintf("Users/%v", id), "", nil, &userResponse)
+	return &userResponse, resp, err
 }
 
-func (c *APIClient) FindUserByUsername(username string) (*User, error) {
+func (c *APIClient) FindUserByUsername(username string) (*User, *http.Response, error) {
 	filter := fmt.Sprintf("userName eq \"%v\"", username)
 
 	var userLR UserListResponse
-	if err := c.doRequest("GET", "Users", filter, nil, &userLR); err != nil {
-		return nil, err
+	resp, err := c.doRequest("GET", "Users", filter, nil, &userLR)
+	if err != nil {
+		return nil, resp, err
 	}
 
 	if userLR.TotalResults != 1 || len(userLR.Resources) != 1 {
-		return nil, fmt.Errorf("user \"%v\" not found", username)
+		return nil, resp, fmt.Errorf("user \"%v\" not found", username)
 	}
 
-	return &userLR.Resources[0], nil
+	return &userLR.Resources[0], resp, nil
 }
 
-func (c *APIClient) FindGroupByDisplayname(displayname string) (*Group, error) {
+func (c *APIClient) FindGroupByDisplayname(displayname string) (*Group, *http.Response, error) {
 	filter := fmt.Sprintf("displayName eq \"%v\"", displayname)
 
 	var groupLR GroupListResponse
-	if err := c.doRequest("GET", "Groups", filter, nil, &groupLR); err != nil {
-		return nil, err
+	resp, err := c.doRequest("GET", "Groups", filter, nil, &groupLR)
+	if err != nil {
+		return nil, resp, err
 	}
 
 	if groupLR.TotalResults != 1 || len(groupLR.Resources) != 1 {
-		return nil, fmt.Errorf("group \"%v\" not found", displayname)
+		return nil, resp, fmt.Errorf("group \"%v\" not found", displayname)
 	}
 
-	return &groupLR.Resources[0], nil
+	return &groupLR.Resources[0], resp, nil
 }
 
-func (c *APIClient) CreateGroup(displayname string) (*Group, error) {
+func (c *APIClient) CreateGroup(displayname string) (*Group, *http.Response, error) {
 	body := map[string]interface{}{"displayName": displayname, "members": []string{}}
 	var groupResponse Group
-	return &groupResponse, c.doRequest("POST", "Groups", "", body, &groupResponse)
+	resp, err := c.doRequest("POST", "Groups", "", body, &groupResponse)
+	return &groupResponse, resp, err
 }
 
-func (c *APIClient) ReadGroup(id string) (*Group, error) {
+func (c *APIClient) ReadGroup(id string) (*Group, *http.Response, error) {
 	var groupResponse Group
-	return &groupResponse, c.doRequest("GET", fmt.Sprintf("Groups/%v", id), "", nil, &groupResponse)
+	resp, err := c.doRequest("GET", fmt.Sprintf("Groups/%v", id), "", nil, &groupResponse)
+	return &groupResponse, resp, err
 }
 
-func (c *APIClient) DeleteGroup(id string) error {
+func (c *APIClient) DeleteGroup(id string) (*http.Response, error) {
 	return c.doRequest("DELETE", fmt.Sprintf("Groups/%v", id), "", nil, nil)
 }
 
-func (c *APIClient) TestGroupMember(group_id string, user_id string) (bool, error) {
+func (c *APIClient) TestGroupMember(group_id string, user_id string) (bool, *http.Response, error) {
 	filter := fmt.Sprintf("id eq \"%v\" and members eq \"%v\"", group_id, user_id)
 
 	var groupLR GroupListResponse
-	if err := c.doRequest("GET", "Groups", filter, nil, &groupLR); err != nil {
-		return false, err
+	resp, err := c.doRequest("GET", "Groups", filter, nil, &groupLR)
+	if err != nil {
+		return false, resp, err
 	}
 
-	return (groupLR.TotalResults != 1 || len(groupLR.Resources) != 1), nil
+	return (groupLR.TotalResults != 1 || len(groupLR.Resources) != 1), resp, nil
 }
 
-func (c *APIClient) AddGroupMember(group_id string, user_id string) error {
+func (c *APIClient) AddGroupMember(group_id string, user_id string) (*http.Response, error) {
 
 	opmsg := OperationMessage{
 		Schemas: []string{"urn:ietf:params:scim:api:messages:2.0:PatchOp"},
@@ -251,7 +261,7 @@ func (c *APIClient) AddGroupMember(group_id string, user_id string) error {
 	return c.doRequest("PATCH", fmt.Sprintf("Groups/%v", group_id), "", opmsg, nil)
 }
 
-func (c *APIClient) RemoveGroupMember(group_id string, user_id string) error {
+func (c *APIClient) RemoveGroupMember(group_id string, user_id string) (*http.Response, error) {
 
 	opmsg := OperationMessage{
 		Schemas: []string{"urn:ietf:params:scim:api:messages:2.0:PatchOp"},

@@ -67,7 +67,7 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 		Active: d.Get("active").(bool),
 	}
 
-	user, err := client.CreateUser(&new_user)
+	user, _, err := client.CreateUser(&new_user)
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
@@ -87,7 +87,7 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	user, err := client.ReadUser(d.Id())
+	user, _, err := client.ReadUser(d.Id())
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
@@ -111,7 +111,7 @@ func resourceUserDelete(ctx context.Context, d *schema.ResourceData, meta interf
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	err := client.DeleteUser(d.Get("id").(string))
+	_, err := client.DeleteUser(d.Get("id").(string))
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
@@ -150,7 +150,7 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 		}
 	}
 
-	_, err := client.PatchUser(&opmsg, d.Id())
+	_, _, err := client.PatchUser(&opmsg, d.Id())
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{

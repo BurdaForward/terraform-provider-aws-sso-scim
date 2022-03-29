@@ -33,7 +33,7 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 	diags := diag.Diagnostics{}
 	client := meta.(*APIClient)
 
-	user, err := client.FindUserByUsername(d.Get("user_name").(string))
+	user, _, err := client.FindUserByUsername(d.Get("user_name").(string))
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{

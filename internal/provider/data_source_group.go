@@ -29,7 +29,7 @@ func dataSourceGroupRead(ctx context.Context, d *schema.ResourceData, meta inter
 	diags := diag.Diagnostics{}
 	client := meta.(*APIClient)
 
-	group, err := client.FindGroupByDisplayname(d.Get("display_name").(string))
+	group, _, err := client.FindGroupByDisplayname(d.Get("display_name").(string))
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{

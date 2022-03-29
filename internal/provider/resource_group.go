@@ -35,7 +35,7 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, meta inter
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	group, err := client.CreateGroup(d.Get("display_name").(string))
+	group, _, err := client.CreateGroup(d.Get("display_name").(string))
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
@@ -55,7 +55,7 @@ func resourceGroupRead(ctx context.Context, d *schema.ResourceData, meta interfa
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	group, err := client.ReadGroup(d.Id())
+	group, _, err := client.ReadGroup(d.Id())
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
@@ -75,7 +75,7 @@ func resourceGroupDelete(ctx context.Context, d *schema.ResourceData, meta inter
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	err := client.DeleteGroup(d.Get("id").(string))
+	_, err := client.DeleteGroup(d.Get("id").(string))
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
