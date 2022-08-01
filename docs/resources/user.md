@@ -14,10 +14,10 @@ Creates a new user.
 
 ```terraform
 resource "aws-sso-scim_user" "example" {
-    user_name = "john.doe@example.com"
-    given_name = "John"
-    family_name = "Doe"
-    display_name = "John Doe"
+  user_name    = "john.doe@example.com"
+  given_name   = "John"
+  family_name  = "Doe"
+  display_name = "John Doe"
 }
 ```
 
@@ -26,17 +26,19 @@ resource "aws-sso-scim_user" "example" {
 
 ### Required
 
-- **display_name** (String) Display name for the user.
-- **family_name** (String) Family name for the user.
-- **given_name** (String) Given name for the user.
-- **user_name** (String) Username for the user.
+- `display_name` (String) Display name for the user.
+- `family_name` (String) Family name for the user.
+- `given_name` (String) Given name for the user.
+- `user_name` (String) Username for the user.
 
 ### Optional
 
-- **active** (Boolean) Set user to be active. Defaults to `false`.
+- `active` (Boolean) Set user to be active. Defaults to `false`.
+- `email_address` (String) Primary email address.
+- `email_type` (String) Usage type of the email adress, e.g. 'work'.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 

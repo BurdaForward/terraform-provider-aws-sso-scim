@@ -23,5 +23,5 @@ provider "aws-sso-scim" {
 
 ### Required
 
-- **endpoint** (String) Full URL of your AWS SSO SCIM endpoint. Can also be provided via `AWS_SSO_SCIM_ENDPOINT` environment variable.
-- **token** (String) Authentication token of your AWS SSO SCIM endpoint. Can also be provided via `AWS_SSO_SCIM_TOKEN` environment variable.
+- `endpoint` (String) Full URL of your AWS SSO SCIM endpoint. Can also be provided via `AWS_SSO_SCIM_ENDPOINT` environment variable.
+- `token` (String) Authentication token of your AWS SSO SCIM endpoint. Can also be provided via `AWS_SSO_SCIM_TOKEN` environment variable.

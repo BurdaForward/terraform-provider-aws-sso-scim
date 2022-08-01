@@ -23,10 +23,10 @@ data "aws-sso-scim_group" "example" {
 
 ### Required
 
-- **display_name** (String) Reference by displayName attribute.
+- `display_name` (String) Reference by displayName attribute.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 

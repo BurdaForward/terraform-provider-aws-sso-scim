@@ -23,10 +23,10 @@ resource "aws-sso-scim_group" "example" {
 
 ### Required
 
-- **display_name** (String) Display name for the group. This cannot be changed after creation.
+- `display_name` (String) Display name for the group. This cannot be changed after creation.
 
 ### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 

@@ -32,11 +32,11 @@ resource "aws-sso-scim_group_member" "example" {
 
 ### Required
 
-- **group_id** (String) Group identifier.
-- **user_id** (String) User identifier.
+- `group_id` (String) Group identifier.
+- `user_id` (String) User identifier.
 
-### Optional
+### Read-Only
 
-- **id** (String) The ID of this resource.
+- `id` (String) The ID of this resource.
 
 

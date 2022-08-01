@@ -23,11 +23,16 @@ data "aws-sso-scim_user" "example" {
 
 ### Required
 
-- **user_name** (String) Reference by userName attribute.
+- `user_name` (String) Reference by userName attribute.
 
 ### Read-Only
 
-- **display_name** (String)
-- **id** (String) The ID of this resource.
+- `active` (Boolean) Set user to be active. Defaults to `false`.
+- `display_name` (String)
+- `email_address` (String) Primary email address.
+- `email_type` (String) Usage type of the email adress, e.g. 'work'.
+- `family_name` (String) Family name for the user.
+- `given_name` (String) Given name for the user.
+- `id` (String) The ID of this resource.
 
 
