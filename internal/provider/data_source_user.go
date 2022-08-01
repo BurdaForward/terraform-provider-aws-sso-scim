@@ -25,6 +25,31 @@ func dataSourceUser() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"given_name": {
+				Description: "Given name for the user.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"family_name": {
+				Description: "Family name for the user.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"email_address": {
+				Description: "Primary email address.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"email_type": {
+				Description: "Usage type of the email adress, e.g. 'work'.",
+				Type:        schema.TypeString,
+				Computed:    true,
+			},
+			"active": {
+				Description: "Set user to be active. Defaults to `false`.",
+				Type:        schema.TypeBool,
+				Computed:    true,
+			},
 		},
 	}
 }
@@ -45,7 +70,17 @@ func dataSourceUserRead(ctx context.Context, d *schema.ResourceData, meta interf
 	}
 
 	d.SetId(user.ID)
+	d.Set("user_name", user.UserName)
 	d.Set("display_name", user.DisplayName)
+	// check if name is set?
+	d.Set("given_name", user.Name.GivenName)
+	d.Set("family_name", user.Name.FamilyName)
+
+	// AWS SSO SCIM only allows a single value for multi-valued properties like emails, so executes only once
+	for _, v := range user.Emails {
+		d.Set("email_address", v.Value)
+		d.Set("email_type", v.Type)
+	}
 
 	return diags
 }
