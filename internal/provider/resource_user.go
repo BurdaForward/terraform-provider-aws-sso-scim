@@ -43,6 +43,16 @@ func resourceUser() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 			},
+			"email_address": {
+				Description: "Primary email address.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
+			"email_type": {
+				Description: "Usage type of the email adress, e.g. 'work'.",
+				Type:        schema.TypeString,
+				Optional:    true,
+			},
 			"active": {
 				Description: "Set user to be active. Defaults to `false`.",
 				Type:        schema.TypeBool,
@@ -65,6 +75,19 @@ func resourceUserCreate(ctx context.Context, d *schema.ResourceData, meta interf
 			GivenName:  d.Get("given_name").(string),
 		},
 		Active: d.Get("active").(bool),
+	}
+
+	if d.Get("email_address") != "" {
+		new_user.Emails = []Email{
+			{
+				Value:   d.Get("email_address").(string),
+				Primary: true,
+			},
+		}
+
+		if d.Get("email_type") != "" {
+			new_user.Emails[0].Type = d.Get("email_type").(string)
+		}
 	}
 
 	user, _, err := client.CreateUser(&new_user)
@@ -110,6 +133,12 @@ func resourceUserRead(ctx context.Context, d *schema.ResourceData, meta interfac
 	d.Set("given_name", user.Name.GivenName)
 	d.Set("active", user.Active)
 
+	// AWS SSO SCIM only allows a single value for multi-valued properties like emails, so executes only once
+	for _, v := range user.Emails {
+		d.Set("email_address", v.Value)
+		d.Set("email_type", v.Type)
+	}
+
 	return diags
 }
 
@@ -135,28 +164,46 @@ func resourceUserUpdate(ctx context.Context, d *schema.ResourceData, meta interf
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	opmsg := OperationMessage{}
+	user, resp, err := client.ReadUser(d.Id())
 
-	required_map := map[string]string{
-		"user_name":    "userName",
-		"display_name": "displayName",
-		"family_name":  "name.familyName",
-		"given_name":   "name.givenName",
-		"active":       "active",
-	}
+	user.Meta = Meta{}
 
-	for attribute, path := range required_map {
-		// These attributes are required and can only be replaced
-		if d.HasChange(attribute) {
-			opmsg.Operations = append(opmsg.Operations, Operation{
-				Operation: "replace",
-				Path:      path,
-				Value:     d.Get(attribute),
-			})
+	if err != nil {
+		// if we get a 404, user maybe has vanished, so we remove this resource from the state.
+		if resp.StatusCode == 404 {
+			d.SetId("")
+			return diags
 		}
+
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Unable to read User",
+			Detail:   err.Error(),
+		})
+		return diags
 	}
 
-	_, _, err := client.PatchUser(&opmsg, d.Id())
+	user.UserName = d.Get("user_name").(string)
+	user.DisplayName = d.Get("display_name").(string)
+	user.Name.FamilyName = d.Get("family_name").(string)
+	user.Name.GivenName = d.Get("given_name").(string)
+	user.Active = d.Get("active").(bool)
+
+	if d.Get("email_address") != "" {
+		user.Emails = []Email{
+			{
+				Value:   d.Get("email_address").(string),
+				Primary: true,
+			},
+		}
+		if d.Get("email_type") != "" {
+			user.Emails[0].Type = d.Get("email_type").(string)
+		}
+	} else {
+		user.Emails = []Email{}
+	}
+
+	_, resp, err = client.PutUser(user, d.Id())
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{

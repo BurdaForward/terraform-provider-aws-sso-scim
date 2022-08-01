@@ -23,7 +23,7 @@ type Name struct {
 
 type Email struct {
 	Value   string `json:"value"`
-	Type    string `json:"type"`
+	Type    string `json:"type,omitempty"`
 	Primary bool   `json:"primary"`
 }
 
