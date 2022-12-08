@@ -214,8 +214,8 @@ func (c *APIClient) FindGroupByDisplayname(displayname string) (*Group, *http.Re
 	return &groupLR.Resources[0], resp, nil
 }
 
-func (c *APIClient) CreateGroup(displayname string) (*Group, *http.Response, error) {
-	body := map[string]interface{}{"displayName": displayname, "members": []string{}}
+func (c *APIClient) CreateGroup(displayname string, externalid string) (*Group, *http.Response, error) {
+	body := map[string]interface{}{"displayName": displayname, "members": []string{}, "externalId": externalid}
 	var groupResponse Group
 	resp, err := c.doRequest("POST", "Groups", "", body, &groupResponse)
 	return &groupResponse, resp, err
@@ -225,6 +225,12 @@ func (c *APIClient) ReadGroup(id string) (*Group, *http.Response, error) {
 	var groupResponse Group
 	resp, err := c.doRequest("GET", fmt.Sprintf("Groups/%v", id), "", nil, &groupResponse)
 	return &groupResponse, resp, err
+}
+
+func (c *APIClient) PatchGroup(opmsg *OperationMessage, id string) (*User, *http.Response, error) {
+	var userResponse User
+	resp, err := c.doRequest("PATCH", fmt.Sprintf("Groups/%v", id), "", opmsg, &userResponse)
+	return &userResponse, resp, err
 }
 
 func (c *APIClient) DeleteGroup(id string) (*http.Response, error) {
