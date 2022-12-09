@@ -23,7 +23,7 @@ func resourceGroup() *schema.Resource {
 				Computed: true,
 			},
 			"display_name": {
-				Description: "Display name for the group. This cannot be changed after creation.",
+				Description: "Display name for the group",
 				Type:        schema.TypeString,
 				Required:    true,
 			},

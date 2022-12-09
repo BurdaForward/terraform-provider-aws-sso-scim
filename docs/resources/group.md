@@ -32,7 +32,7 @@ resource "aws-sso-scim_group" "external_example" {
 
 ### Optional
 
-- `external_id` (String) External ID for the group
+- `external_id` (String) External ID for the group. This cannot be changed after creation.
 
 ### Read-Only
 
