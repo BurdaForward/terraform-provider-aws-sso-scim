@@ -23,14 +23,15 @@ func resourceGroup() *schema.Resource {
 				Computed: true,
 			},
 			"display_name": {
-				Description: "Display name for the group",
+				Description: "Display name for the group. This cannot be changed after creation.",
 				Type:        schema.TypeString,
 				Required:    true,
 			},
 			"external_id": {
-				Description: "External ID for the group",
+				Description: "External ID for the group. This cannot be changed after creation.",
 				Type:        schema.TypeString,
 				Optional:    true,
+				ForceNew: true,
 			},
 		},
 	}
@@ -40,7 +41,12 @@ func resourceGroupCreate(ctx context.Context, d *schema.ResourceData, meta inter
 	client := meta.(*APIClient)
 	diags := diag.Diagnostics{}
 
-	group, _, err := client.CreateGroup(d.Get("display_name").(string), d.Get("external_id").(string))
+	new_group := Group{
+		DisplayName: d.Get("display_name").(string),
+		ExternalID:  d.Get("external_id").(string),
+	}
+
+	group, _, err := client.CreateGroup(&new_group)
 
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
@@ -89,8 +95,6 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 
 	group, _, err := client.ReadGroup(d.Id())
 
-	group.Meta = Meta{}
-
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -99,7 +103,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 		})
 		return diags
 	}
-
+	
 	group.DisplayName = d.Get("display_name").(string)
 	group.ExternalID = d.Get("external_id").(string)
 
@@ -111,14 +115,17 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 				Path:      "displayName",
 				Value: group.DisplayName,
 			},
-			{
-				Operation: "replace",
-				Path:      "externalId",
-				Value: group.ExternalID,
-			},
 		},
 	}
-	
+
+	if group.ExternalID != "" {
+		opmsg.Operations = append(opmsg.Operations, Operation{
+			Operation: "replace",
+			Path:      "externalId",
+			Value: group.ExternalID,
+		})
+	}
+
 	_, _, err = client.PatchGroup(&opmsg, d.Id())
 
 	if err != nil {
