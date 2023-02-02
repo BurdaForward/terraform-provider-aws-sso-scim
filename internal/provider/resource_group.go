@@ -31,7 +31,7 @@ func resourceGroup() *schema.Resource {
 				Description: "External ID for the group. This cannot be changed after creation.",
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew: true,
+				ForceNew:    true,
 			},
 		},
 	}
@@ -103,7 +103,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 		})
 		return diags
 	}
-	
+
 	group.DisplayName = d.Get("display_name").(string)
 	group.ExternalID = d.Get("external_id").(string)
 
@@ -113,7 +113,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 			{
 				Operation: "replace",
 				Path:      "displayName",
-				Value: group.DisplayName,
+				Value:     group.DisplayName,
 			},
 		},
 	}
@@ -122,7 +122,7 @@ func resourceGroupUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 		opmsg.Operations = append(opmsg.Operations, Operation{
 			Operation: "replace",
 			Path:      "externalId",
-			Value: group.ExternalID,
+			Value:     group.ExternalID,
 		})
 	}
 
