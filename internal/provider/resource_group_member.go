@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,7 +18,17 @@ func resourceGroupMember() *schema.Resource {
 		ReadContext:   resourceGroupMemberRead,
 		DeleteContext: resourceGroupMemberDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) ([]*schema.ResourceData, error) {
+				parts := strings.Split(data.Id(), ",")
+				if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+					return nil, fmt.Errorf("unexpected format of ID (%q), expected GROUP_ID,USER_ID", data.Id())
+				}
+
+				data.Set("group_id", parts[0]) // set group_id
+				data.Set("user_id", parts[1])  // set user_id
+
+				return []*schema.ResourceData{data}, nil
+			},
 		},
 		Schema: map[string]*schema.Schema{
 			"group_id": {
@@ -64,7 +75,7 @@ func resourceGroupMemberRead(ctx context.Context, d *schema.ResourceData, meta i
 
 	if err != nil {
 		// if we get a 404, user might have vanished, so we remove this resource from the state.
-		if resp.StatusCode == 404 {
+		if resp != nil && resp.StatusCode == 404 {
 			d.SetId("")
 			return diags
 		}
