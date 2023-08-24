@@ -16,7 +16,9 @@ func resourceUser() *schema.Resource {
 		ReadContext:   resourceUserRead,
 		DeleteContext: resourceUserDelete,
 		UpdateContext: resourceUserUpdate,
-
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		// "The givenName, familyName, userName, and displayName fields are required. "
 		Schema: map[string]*schema.Schema{
 			"id": {
