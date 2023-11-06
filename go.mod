@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/hashicorp/terraform-plugin-docs v0.16.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.28.0
-	golang.org/x/time v0.3.0
+	golang.org/x/time v0.4.0
 )
 
 require (
